@@ -3,9 +3,21 @@ sap_sid: "initial"
 sap_control_function: "initial"
 sap_control_name_header: "initial"
 
+sap_control_system_scope: "ALL"
+sap_control_system_waittimeout: 180
+sap_control_system_softtimeout: 480
+sap_control_system_force: 0
+
 nowait: false
 sap_control_start: "StartWait 180 2"
 sap_control_stop: "StopWait 180 2"
+
+sap_control_startsystem: "StartSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }}"
+sap_control_stopsystem: "StopSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }}"
+sap_control_restartsystem: "RestartSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }} {{ sap_control_system_runlevel }}"
+sap_control_updatesystem: "UpdateSystem {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }} {{ sap_control_system_force }}"
+sap_control_waitforstopped: "WaitforStopped {{ sap_control_system_waittimeout }} 2"
+sap_control_waitforstarted: "WaitforStarted {{ sap_control_system_waittimeout }} 2"
 
 # get_all_sap_sid_dir_nw: "/sapmnt"
 # get_all_sap_sid_dir_hana: "/hana/shared"
@@ -13,6 +25,8 @@ sap_control_stop: "StopWait 180 2"
 # Functions
 
 sap_control_functions_list:
+  - restartsystem_all_nw
+  - updatesystem_all_nw
   - restart_all_sap
   - stop_all_sap
   - start_all_sap
@@ -30,6 +44,16 @@ sap_control_functions_list:
   - start_sap_hana
 
 # Functions flow
+restartsystem_all_nw_list:
+  - sap_control_function_current: "nw_stopsystem"
+  - sap_control_function_current: "nw_waitforstopped"
+  - sap_control_function_current: "nw_startsystem"
+  - sap_control_function_current: "nw_waitforstarted"
+
+updatesystem_all_nw_list:
+  - sap_control_function_current: "nw_updatesystem"
+  - sap_control_function_current: "nw_waitforstarted"
+
 restart_all_sap_list:
   - sap_control_function_current: "nw_stop"
   - sap_control_function_current: "hana_stop"

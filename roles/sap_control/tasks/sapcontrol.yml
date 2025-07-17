@@ -12,9 +12,9 @@
   ansible.builtin.include_tasks: functions/sapstartsrv.yml
 
 # Execute sapcontrol
-- name: SAP {{ sap_control_name_header }} - Executing sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] }}
+- name: SAP {{ sap_control_name_header }} - Executing sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] | regex_replace('\\{\\{([^\\}]+)\\}\\}', '\\1') | template }}
   ansible.builtin.shell: |
-    source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] }}
+    source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] | regex_replace('\\{\\{([^\\}]+)\\}\\}', '\\1') | template }}
   args:
     executable: /bin/bash
   become: true
@@ -28,3 +28,4 @@
   when:
     - "'nw' in sap_type"
     - "'stop' in funct_type"
+    - "not funct_type is match('.*system')"
