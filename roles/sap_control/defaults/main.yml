@@ -46,6 +46,8 @@ restartsystem_all_nw_list:
   - sap_control_function_current: "nw_waitforstarted"
 
 updatesystem_all_nw_list:
+  - sap_control_function_current: "nw_startsystem"
+  - sap_control_function_current: "nw_waitforstarted"
   - sap_control_function_current: "nw_updatesystem"
   - sap_control_function_current: "nw_waitforstarted"
 
