@@ -3,21 +3,16 @@ sap_sid: "initial"
 sap_control_function: "initial"
 sap_control_name_header: "initial"
 
-sap_control_system_scope: "ALL"
-sap_control_system_waittimeout: 180
-sap_control_system_softtimeout: 480
-sap_control_system_force: 0
-
 nowait: false
 sap_control_start: "StartWait 180 2"
 sap_control_stop: "StopWait 180 2"
 
-sap_control_startsystem: "StartSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }}"
-sap_control_stopsystem: "StopSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }}"
-sap_control_restartsystem: "RestartSystem {{ sap_control_system_scope }} {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }} {{ sap_control_system_runlevel }}"
-sap_control_updatesystem: "UpdateSystem {{ sap_control_system_waittimeout }} {{ sap_control_system_softtimeout }} {{ sap_control_system_force }}"
-sap_control_waitforstopped: "WaitforStopped {{ sap_control_system_waittimeout }} 2"
-sap_control_waitforstarted: "WaitforStarted {{ sap_control_system_waittimeout }} 2"
+sap_control_startsystem: "StartSystem ALL 180"  # function StartSystem waittimeout
+sap_control_stopsystem: "StopSystem ALL 180 480"  # function StopSystem waittimeout softtimeout
+sap_control_restartsystem: "RestartSystem ALL 180 480"  # function RestartSystem waittimeout softtimeout
+sap_control_updatesystem: "UpdateSystem 180 480 0"  # function UpdateSystem waittimeout softtimeout force
+sap_control_waitforstopped: "WaitforStopped 180 2"  # function WaitforStopped waittimeout delay
+sap_control_waitforstarted: "WaitforStarted 180 2"  # function WaitforStarted waittimeout delay
 
 # get_all_sap_sid_dir_nw: "/sapmnt"
 # get_all_sap_sid_dir_hana: "/hana/shared"

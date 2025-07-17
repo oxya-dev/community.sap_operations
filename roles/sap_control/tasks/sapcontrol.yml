@@ -12,9 +12,9 @@
   ansible.builtin.include_tasks: functions/sapstartsrv.yml
 
 # Execute sapcontrol
-- name: SAP {{ sap_control_name_header }} - Executing sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] | regex_replace('\\{\\{([^\\}]+)\\}\\}', '\\1') | template }}
+- name: SAP {{ sap_control_name_header }} - Executing sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] }}
   ansible.builtin.shell: |
-    source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] | regex_replace('\\{\\{([^\\}]+)\\}\\}', '\\1') | template }}
+    source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ vars['sap_control_' + funct_type] }}
   args:
     executable: /bin/bash
   become: true
