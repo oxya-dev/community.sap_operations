@@ -76,6 +76,9 @@ restartsystem_all_nw_list:
 startsystem_all_nw_list:
   - sap_control_function_current: "nw_startsystem"
 
+stopsystem_all_nw_list:
+  - sap_control_function_current: "nw_stopsystem"
+
 updatesystem_all_nw_list:
   - sap_control_function_current: "nw_startsystem"
   - sap_control_function_current: "nw_updatesystem"
