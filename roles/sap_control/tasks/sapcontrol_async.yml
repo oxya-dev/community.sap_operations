@@ -27,7 +27,3 @@
        Async function {{ async_function_dict.test_function }} for SAP SID {{ passed_sap_sid }}
        is done with result:
        {{ test_function_result.stdout }}
-
-- name: Fail
-  ansible.builtin.fail:
-    msg: "FAIL"
