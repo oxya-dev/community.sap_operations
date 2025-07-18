@@ -6,11 +6,12 @@
     executable: /bin/bash
   become: true
   become_user: "{{ passed_sap_sid | lower }}adm"
-  register: sapcontrol_async_status
-#  failed_when: "'FAIL' in sapcontrol_async_status.stdout"
+  register: test_function_result
+#  failed_when: "'FAIL' in test_function_result.stdout"
   retries: "{{ async_function_dict.retries | default(0) | int }}"
   delay: "{{ async_function_dict.delay | default(0) | int }}"
   until: "{{ async_function_dict.until | default([]) }}"
+  # until: "{% for condition in async_function_dict.until_conditions %}{{ condition }}{% if not loop.last %} and {% endif %}{% endfor %}"
   failed_when: false
 
 - name: Debug stdout
@@ -18,7 +19,7 @@
     msg: |
        Async function {{ async_function_dict.test_function }} for SAP SID {{ passed_sap_sid }}
        is done with result:
-       {{ sapcontrol_async_status.stdout }}
+       {{ test_function_result.stdout }}
 
 - name: Fail
   ansible.builtin.fail:
