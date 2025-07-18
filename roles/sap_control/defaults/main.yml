@@ -13,7 +13,7 @@ sap_control_updatesystem: "UpdateSystem 180 480 0"  # function UpdateSystem wait
 sap_control_waitforstopped: "WaitforStopped 180 2"  # function WaitforStopped waittimeout delay
 sap_control_waitforstarted: "WaitforStarted 180 2"  # function WaitforStarted waittimeout delay
 
-# Parameters to handle async functions
+# Parameters to handle async functions in sapcontrol_async.yml
 
 sap_control_startsystem_waitforasync:
   test_function: "GetSystemInstanceList"

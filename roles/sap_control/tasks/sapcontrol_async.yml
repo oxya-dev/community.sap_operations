@@ -3,15 +3,6 @@
   ansible.builtin.wait_for:
     timeout: 5
 
-- name: Debug values
-  ansible.builtin.debug:
-    msg: |
-      Async function {{ async_function_dict.test_function }} for SAP SID {{ passed_sap_sid }}
-      with retries: {{ async_function_dict.retries | default(0) | int }}
-      and delay: {{ async_function_dict.delay | default(0) | int }}
-      and until conditions: {{ async_function_dict.until | default([]) }}
-      is being executed.
-
 - name: SAP {{ sap_control_name_header }} - Checking if Async action is over by executing sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
   ansible.builtin.shell: |
     source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
@@ -24,8 +15,10 @@
   retries: "{{ async_function_dict.retries | default(0) | int }}"
   delay: "{{ async_function_dict.delay | default(0) | int }}"
   until: >
-    (async_function_dict.until_false is defined and not test_function_result.stdout | regex_search(async_function_dict.until_false, multiline=True)) and
-    (async_function_dict.until_true is defined and test_function_result.stdout | regex_search(async_function_dict.until_true, multiline=True))
+    (async_function_dict.until_false is not defined
+    or async_function_dict.until_false is defined and not test_function_result.stdout | regex_search(async_function_dict.until_false, multiline=True)) and
+    (async_function_dict.until_true is not defined or
+    async_function_dict.until_true is defined and test_function_result.stdout | regex_search(async_function_dict.until_true, multiline=True))
   failed_when: false
 
 - name: Debug stdout
