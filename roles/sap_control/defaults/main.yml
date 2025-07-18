@@ -15,24 +15,35 @@ sap_control_waitforstopped: "WaitforStopped 180 2"  # function WaitforStopped wa
 sap_control_waitforstarted: "WaitforStarted 180 2"  # function WaitforStarted waittimeout delay
 
 sap_control_startsystem_waitforasync:
-  test_function: "{{ sap_control_waitforstarted }}"
-
-sap_control_stopsystem_waitforasync:
-  test_function: "{{ sap_control_waitforstopped }}"
-
-sap_control_restartsystem_waitforasync:
   test_function: "GetSystemInstanceList"
   retries: 60
   delay: 10
   until:
-    - test_function_result.stdout not in ['YELLOW', 'RED', 'GREY']
+    - not (test_function_result.stdout | regex_search('GRAY\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True))
+    - test_function_result.stdout | regex_search('GREEN\s*$', multiline=True)
+
+sap_control_restartsystem_waitforasync: "{{ sap_control_startsystem_waitforasync }}"
+
+sap_control_stopsystem_waitforasync:
+  test_function: "GetSystemInstanceList"
+  retries: 60
+  delay: 10
+  until:
+    - not (test_function_result.stdout | regex_search('GREEN\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True))
+    - test_function_result.stdout | regex_search('GRAY\s*$', multiline=True)
 
 sap_control_updatesystem_waitforasync:
   test_function: "GetSystemUpdateList"
   retries: 60
   delay: 10
   until:
-    - test_function_result.stdout not in ['YELLOW', 'RED', 'GREY']
+    - not (test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
+          test_function_result.stdout | regex_search('GREY\s*$', multiline=True))
 
 # get_all_sap_sid_dir_nw: "/sapmnt"
 # get_all_sap_sid_dir_hana: "/hana/shared"
@@ -42,6 +53,7 @@ sap_control_updatesystem_waitforasync:
 sap_control_functions_list:
   - restartsystem_all_nw
   - updatesystem_all_nw
+  - startsystem_all_nw
   - restart_all_sap
   - stop_all_sap
   - start_all_sap
@@ -58,18 +70,17 @@ sap_control_functions_list:
   - stop_sap_hana
   - start_sap_hana
 
+
 # Functions flow
 restartsystem_all_nw_list:
-  - sap_control_function_current: "nw_stopsystem"
-  - sap_control_function_current: "nw_waitforstopped"
+  - sap_control_function_current: "nw_restartsystem"
+
+startsystem_all_nw_list:
   - sap_control_function_current: "nw_startsystem"
-  - sap_control_function_current: "nw_waitforstarted"
 
 updatesystem_all_nw_list:
   - sap_control_function_current: "nw_startsystem"
-  - sap_control_function_current: "nw_waitforstarted"
   - sap_control_function_current: "nw_updatesystem"
-  - sap_control_function_current: "nw_waitforstarted"
 
 restart_all_sap_list:
   - sap_control_function_current: "nw_stop"
