@@ -1,0 +1,25 @@
+---
+- name: SAP {{ sap_control_name_header }} - Checking if Async action is over by executing sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
+  ansible.builtin.shell: |
+    source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ passed_sap_sid | lower }}adm"
+  register: sapcontrol_async_status
+#  failed_when: "'FAIL' in sapcontrol_async_status.stdout"
+  retries: "{{ async_function_dict.retries | default(0) | int }}"
+  delay: "{{ async_function_dict.delay | default(0) | int }}"
+  until: "{{ async_function_dict.until | default([]) }}"
+  failed_when: false
+
+- name: Debug stdout
+  ansible.builtin.debug:
+    msg: |
+       Async function {{ async_function_dict.test_function }} for SAP SID {{ passed_sap_sid }}
+       is done with result:
+       {{ sapcontrol_async_status.stdout }}
+
+- name: Fail
+  ansible.builtin.fail:
+    msg: "FAIL"

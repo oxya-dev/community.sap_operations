@@ -14,6 +14,26 @@ sap_control_updatesystem: "UpdateSystem 180 480 0"  # function UpdateSystem wait
 sap_control_waitforstopped: "WaitforStopped 180 2"  # function WaitforStopped waittimeout delay
 sap_control_waitforstarted: "WaitforStarted 180 2"  # function WaitforStarted waittimeout delay
 
+sap_control_startsystem_waitforasync:
+  test_function: "{{ sap_control_waitforstarted }}"
+
+sap_control_stopsystem_waitforasync:
+  test_function: "{{ sap_control_waitforstopped }}"
+
+sap_control_restartsystem_waitforasync:
+  test_function: "GetSystemInstanceList"
+  retries: 60
+  delay: 10
+  until:
+    - test_function_result.stdout not in ['YELLOW', 'RED', 'GREY']
+
+sap_control_updatesystem_waitforasync:
+  test_function: "GetSystemUpdateList"
+  retries: 60
+  delay: 10
+  until:
+    - test_function_result.stdout not in ['YELLOW', 'RED', 'GREY']
+
 # get_all_sap_sid_dir_nw: "/sapmnt"
 # get_all_sap_sid_dir_hana: "/hana/shared"
 
