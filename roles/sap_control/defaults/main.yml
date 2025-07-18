@@ -18,40 +18,28 @@ sap_control_startsystem_waitforasync:
   test_function: "GetSystemInstanceList"
   retries: 60
   delay: 10
-  until:
-    - not (test_function_result.stdout | regex_search('GRAY\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True))
-    - test_function_result.stdout | regex_search('GREEN\s*$', multiline=True)
+  until_false: 'GRAY\s*$|RED\s*$|YELLOW\s*$'
+  until_true: 'GREEN\s*$'
 
 sap_control_restartsystem_waitforasync:
   test_function: "GetSystemInstanceList"
   retries: 60
   delay: 10
-  until:
-    - not (test_function_result.stdout | regex_search('GRAY\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True))
-    - test_function_result.stdout | regex_search('GREEN\s*$', multiline=True)
+  until_false: 'GRAY\s*$|RED\s*$|YELLOW\s*$'
+  until_true: 'GREEN\s*$'
 
 sap_control_stopsystem_waitforasync:
   test_function: "GetSystemInstanceList"
   retries: 60
   delay: 10
-  until:
-    - not (test_function_result.stdout | regex_search('GREEN\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True))
-    - test_function_result.stdout | regex_search('GRAY\s*$', multiline=True)
+  until_false: 'GREEN\s*$|RED\s*$|YELLOW\s*$'
+  until_true: 'GRAY\s*$'
 
 sap_control_updatesystem_waitforasync:
   test_function: "GetSystemUpdateList"
   retries: 60
   delay: 10
-  until:
-    - not (test_function_result.stdout | regex_search('YELLOW\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('RED\s*$', multiline=True) or
-          test_function_result.stdout | regex_search('GREY\s*$', multiline=True))
+  until_false: 'GRAY\s*$|RED\s*$|YELLOW\s*$|GREEN\s*$'
 
 # get_all_sap_sid_dir_nw: "/sapmnt"
 # get_all_sap_sid_dir_hana: "/hana/shared"

@@ -23,8 +23,9 @@
 #  failed_when: "'FAIL' in test_function_result.stdout"
   retries: "{{ async_function_dict.retries | default(0) | int }}"
   delay: "{{ async_function_dict.delay | default(0) | int }}"
-  until: async_function_dict.until | default([])
-  # until: "{% for condition in async_function_dict.until_conditions %}{{ condition }}{% if not loop.last %} and {% endif %}{% endfor %}"
+  until: >
+    (async_function_dict.until_false is defined and not test_function_result.stdout | regex_search(async_function_dict.until_false, multiline=True)) and
+    (async_function_dict.until_true is defined and test_function_result.stdout | regex_search(async_function_dict.until_true, multiline=True))
   failed_when: false
 
 - name: Debug stdout
