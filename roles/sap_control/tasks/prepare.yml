@@ -9,7 +9,7 @@
   ansible.builtin.set_fact:
     sap_control_name_header: "{{ sap_type | upper }} {{ funct_type | capitalize }}"
 
-- name: SAP Control
+- name: SAP Control (not System wide functions)
   vars:
     sap_control_execute_sid: "{{ item.SID }}"
     sap_control_execute_type: "{{ item.Type }}"
@@ -19,3 +19,18 @@
   loop: "{{ sap_facts_register.ansible_facts.sap }}"
   when:
     - "item.InstanceType | lower == sap_type | lower"
+    - "not funct_type is match('.*system')"
+
+- name: SAP Control (System wide functions)
+  vars:
+    sap_control_execute_sid: "{{ item.SID }}"
+    sap_control_execute_type: "{{ item.Type }}"
+    sap_control_execute_instance_nr: "{{ item.NR }}"
+    sap_control_execute_instance_type: "{{ item.InstanceType }}"
+  ansible.builtin.include_tasks: "sapcontrol.yml"
+  loop: "{{ sap_facts_register.ansible_facts.sap }}"
+  when:
+    - "item.InstanceType | lower == sap_type | lower"
+    - "funct_type is match('.*system')"
+    - "item.TYPE | lower == 'ascs'
+      or item.TYPE | lower == 'scs'"
