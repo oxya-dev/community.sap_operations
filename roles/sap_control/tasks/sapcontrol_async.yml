@@ -1,4 +1,8 @@
 ---
+- name: Pause for 5 Seconds
+  ansible.builtin.wait_for:
+    timeout: 5
+
 - name: SAP {{ sap_control_name_header }} - Checking if Async action is over by executing sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
   ansible.builtin.shell: |
     source ~/.profile && sapcontrol -nr {{ passed_sap_nr }} -function {{ async_function_dict.test_function }}
