@@ -9,14 +9,30 @@
   ansible.builtin.set_fact:
     sap_control_name_header: "{{ sap_type | upper }} {{ funct_type | capitalize }}"
 
-- name: SAP Control (not System wide functions)
+- name: Prepare - Set SAP System List
+  ansible.builtin.set_fact:
+    sap_system_list: "{{ ('all' in sap_control_function)
+      | ansible.builtin.ternary(sap_facts_register.ansible_facts.sap, sap_facts_register.ansible_facts.sap | selectattr('SID', 'eq', sap_sid | upper))
+      | list }}"
+
+- name: Debug found SID
+  ansible.builtin.debug:
+    msg: "Found SAP systems for SID: {{ sap_sid }} - {{ sap_system_list }} system(s) found"
+    verbosity: 1
+
+- name: Fail if no SAP systems found
+  ansible.builtin.fail:
+    msg: "No SAP systems found for SID: {{ sap_sid }}"
+  when: sap_system_list | length == 0
+
+- name: SAP Control
   vars:
     sap_control_execute_sid: "{{ item.SID }}"
     sap_control_execute_type: "{{ item.Type }}"
     sap_control_execute_instance_nr: "{{ item.NR }}"
     sap_control_execute_instance_type: "{{ item.InstanceType }}"
   ansible.builtin.include_tasks: "sapcontrol.yml"
-  loop: "{{ sap_facts_register.ansible_facts.sap }}"
+  loop: "{{ sap_system_list }}"
   when:
     - "item.InstanceType | lower == sap_type | lower"
     - "not funct_type is match('.*system')"
